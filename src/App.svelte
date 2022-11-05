@@ -1,11 +1,12 @@
 <script>
 
+import KeyExplainer from "./lib/KeyExplainer.svelte";
 </script>
 
 <main>
-	Split View Slideshow
+	<KeyExplainer />
 </main>
 
 <style>
-  
+
 </style>
