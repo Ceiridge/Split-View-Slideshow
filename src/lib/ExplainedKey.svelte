@@ -9,7 +9,9 @@
 		<span>{key}</span>
 	</div>
 
-	&ndash; {description}
+	{#if (description && description.length > 0)}
+		&ndash; {description}
+	{/if}
 </div>
 
 <style>

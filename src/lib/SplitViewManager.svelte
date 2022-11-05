@@ -1,19 +1,95 @@
 <script>
-	import {onMount} from "svelte";
+	import {beforeUpdate, afterUpdate} from "svelte";
 	import Split from "split.js";
 	import SplitView from "./SplitView.svelte";
 
 	let splitViews;
+	let views = [];
+	let focusedViewIndex = 0;
 
-	onMount(() => {
-		Split(splitViews.children);
+	addView();
+	beforeUpdate(() => {
+		if (splitViews) {
+			// Clean up previous sliders
+			for (const gutter of [...splitViews.getElementsByClassName("gutter")]) {
+				splitViews.removeChild(gutter);
+			}
+		}
 	});
+	afterUpdate(() => {
+		Split(splitViews.getElementsByClassName("view"));
+	});
+
+	function onGlobalKeyDown(event) {
+		switch (event.key) {
+			case "n":
+				addView();
+				break;
+			case "Delete":
+				if (views.length > 1) {
+					popFocusedView();
+				}
+				break;
+			case "q":
+				switchFocus(true);
+				break;
+			case "e":
+				switchFocus(false);
+				break;
+			default:
+				break;
+		}
+	}
+
+	function addView() {
+		const newViewObject = {
+			debugId: crypto.randomUUID()
+		};
+
+		if (views.length === 0) {
+			views.push(newViewObject);
+			return;
+		}
+
+		// Insert at focused index
+		views.splice(focusedViewIndex + 1, 0, newViewObject);
+		views = views;
+		switchFocus(false);
+	}
+
+	function popFocusedView() {
+		views = views.filter(view => view !== views[focusedViewIndex]);
+		switchFocus(true);
+	}
+
+	function switchFocus(left) {
+		let newIndex = focusedViewIndex;
+
+		if (left) {
+			newIndex--;
+		} else {
+			newIndex++;
+		}
+
+		if (newIndex < 0) {
+			newIndex = views.length - 1;
+		} else if (newIndex >= views.length) {
+			newIndex = 0;
+		}
+
+		if (newIndex !== focusedViewIndex) {
+			console.log("Switched to new index " + newIndex);
+			focusedViewIndex = newIndex;
+		}
+	}
 </script>
 
+<svelte:window on:keydown={onGlobalKeyDown}/>
+
 <div class="splitviews" bind:this={splitViews}>
-	<SplitView/>
-	<SplitView/>
-	<SplitView/>
+	{#each views as view, i}
+		<SplitView focused={i === focusedViewIndex} {...view}/>
+	{/each}
 </div>
 
 <style>

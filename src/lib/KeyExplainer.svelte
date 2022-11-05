@@ -17,17 +17,19 @@
 
 <h3>Main Keys:</h3>
 <div class="keyExplainer">
-	<ExplainedKey key="h" description="Show/Hide this help"/>
 	<ExplainedKey key="n" description="Open a new split view media player"/>
+	<ExplainedKey key="del" special={true} description="Close the focused split view"/>
 
 	<ExplainedKey key="q" description="Switch active split view focus to the left"/>
 	<ExplainedKey key="e" description="Switch active split view focus to the right"/>
+
+	<ExplainedKey key="h" description="Show/Hide this help"/>
 </div>
 
 <h3>Standard Media Keys:</h3>
 <div class="keyExplainer">
-	<ExplainedKey key="left" special="true" description="Seek 5s forward or go to the next image"/>
-	<ExplainedKey key="right" special="true" description="Seek 5s backward or go to the next image"/>
+	<ExplainedKey key="left" special={true} description="Seek 5s forward or go to the next image"/>
+	<ExplainedKey key="right" special={true} description="Seek 5s backward or go to the next image"/>
 
 	<ExplainedKey key="j" description="Seek 10s forward"/>
 	<ExplainedKey key="l" description="Seek 10s backward"/>
