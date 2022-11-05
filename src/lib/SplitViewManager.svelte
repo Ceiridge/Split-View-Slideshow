@@ -31,10 +31,10 @@
 					popFocusedView();
 				}
 				break;
-			case "q":
+			case "a":
 				switchFocus(true);
 				break;
-			case "e":
+			case "d":
 				switchFocus(false);
 				break;
 			default:
@@ -43,7 +43,7 @@
 	}
 
 	function addView() {
-		const newViewObject = {};
+		const newViewObject = {}; // TODO: Removing the wrong views
 
 		if (views.length === 0) {
 			views.push(newViewObject);

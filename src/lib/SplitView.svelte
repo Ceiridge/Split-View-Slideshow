@@ -1,4 +1,6 @@
 <script>
+	import {fade} from "svelte/transition";
+	import {cubicInOut} from "svelte/easing";
 	import BrokenImage from "../assets/svg/BrokenImage.svelte";
 	import {readRecursively} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
@@ -8,6 +10,8 @@
 
 	let folderFileInput, fileFileInput;
 	let loadRecursively = false;
+	let showFilePosition = false;
+	let showFilePositionTimeout = null;
 
 	readRecursively.subscribe(val => {
 		loadRecursively = val
@@ -69,11 +73,24 @@
 		}
 
 		const newFile = loadedFiles[newIndex];
+		if (!newFile) {
+			return;
+		}
+
 		if (!newFile.objectUrl) { // Setup my custom file object url
 			newFile.objectUrl = URL.createObjectURL(newFile.file); // TODO: Research if MKV files work
 		}
 
 		currentFileIndex = newIndex;
+		showFilePosition = true;
+
+		if (showFilePositionTimeout !== null) {
+			clearTimeout(showFilePositionTimeout);
+		}
+		showFilePositionTimeout = setTimeout(() => {
+			showFilePosition = false;
+			showFilePositionTimeout = null;
+		}, 1500);
 	}
 
 	function cleanup() {
@@ -83,7 +100,37 @@
 			}
 		}
 	}
+
+	let mediaPlayerExposedFunctions;
+
+	function onGlobalKeyDown(event) {
+		if (!focused) {
+			return;
+		}
+
+		let handledByPlayer = false;
+		if (mediaPlayerExposedFunctions) {
+			handledByPlayer = mediaPlayerExposedFunctions.handleKey(event.key);
+		}
+
+		switch (event.key) {
+			case "ArrowLeft":
+				if (!handledByPlayer) {
+					switchFileIndex(currentFileIndex - 1);
+				}
+				break;
+			case "ArrowRight":
+				if (!handledByPlayer) {
+					switchFileIndex(currentFileIndex + 1);
+				}
+				break;
+			default:
+				break;
+		}
+	}
 </script>
+
+<svelte:window on:keydown={onGlobalKeyDown}/>
 
 <div class="view" class:focused={focused}>
 	<input type="file" bind:this={folderFileInput} on:change={() => {onFilesInput(folderFileInput.files, true);}}
@@ -109,15 +156,28 @@
 		</div>
 
 	{:else if (loadedFiles[currentFileIndex] && loadedFiles[currentFileIndex].objectUrl)}
-		<span class="filePositionInfo">{loadedFiles[currentFileIndex].path}
-			<span class="filePositionInfoState">({currentFileIndex + 1}/{loadedFiles.length})</span></span>
+		{#if showFilePosition}
+			<span class="filePositionInfo" in:fade={{delay: 0, duration: 250, easing: cubicInOut}}
+				  out:fade={{delay: 3250, duration: 250, easing: cubicInOut}}>
+				{loadedFiles[currentFileIndex].path}
+
+				<span class="filePositionInfoState">
+					({currentFileIndex + 1}/{loadedFiles.length})
+				</span>
+			</span>
+		{/if}
 
 		<MediaPlayer mimeType={loadedFiles[currentFileIndex].file.type} url={loadedFiles[currentFileIndex].objectUrl}
-					 displayFileName={loadedFiles[currentFileIndex].path}/>
+					 displayFileName={loadedFiles[currentFileIndex].path}
+					 bind:exposedFunctions={mediaPlayerExposedFunctions}/>
 	{/if}
 </div>
 
 <style>
+	.view {
+		position: relative;
+	}
+
 	.emptyMedia {
 		display: flex;
 		flex-direction: column;

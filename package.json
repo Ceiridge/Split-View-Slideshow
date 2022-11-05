@@ -14,6 +14,8 @@
     "vite": "^3.2.0"
   },
   "dependencies": {
+    "@vidstack/player": "^1.6.4",
+    "plyr": "^3.7.2",
     "split.js": "^1.6.5"
   }
 }
