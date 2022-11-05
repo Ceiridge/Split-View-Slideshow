@@ -17,6 +17,7 @@
 		}
 	});
 	afterUpdate(() => {
+		// TODO: Restore slider positions
 		Split(splitViews.getElementsByClassName("view"));
 	});
 
@@ -42,9 +43,7 @@
 	}
 
 	function addView() {
-		const newViewObject = {
-			debugId: crypto.randomUUID()
-		};
+		const newViewObject = {};
 
 		if (views.length === 0) {
 			views.push(newViewObject);

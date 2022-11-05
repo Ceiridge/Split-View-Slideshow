@@ -1,15 +1,16 @@
 <script>
 	import ExplainedKey from "./ExplainedKey.svelte";
 
-	const supportsWebApis = "showDirectoryPicker" in window && window["showDirectoryPicker"];
+	const supportsWebApis = "webkitRelativePath" in File.prototype;
 </script>
 
 <a href="https://github.com/Ceiridge/Split-View-Slideshow" target="_blank" rel="noreferrer"><h1>Split View
 	Slideshow</h1></a>
 
 {#if !supportsWebApis}
-	<p class="webApiError">Your browser does not support the <a href="https://caniuse.com/mdn-api_window_showdirectorypicker"
-																target="_blank" rel="noreferrer nofollow">experimental
+	<p class="webApiError">Your browser does not support the <a
+			href="https://caniuse.com/mdn-api_window_showdirectorypicker"
+			target="_blank" rel="noreferrer nofollow">experimental
 		web technology</a> used here. Expect errors. A Chromium-based browser is recommended.</p>
 {/if}
 
