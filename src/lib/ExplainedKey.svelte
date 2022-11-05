@@ -45,6 +45,7 @@
 		-moz-box-shadow: 0px 3px 0px -2px rgba(255, 255, 255, 1), 0px 2px 0px 0px rgba(169, 169, 169, 1);
 		box-shadow: 0px 3px 0px -2px rgba(255, 255, 255, 1), 0px 2px 0px 0px rgba(169, 169, 169, 1);
 		cursor: pointer;
+		font-family: "Lucida Console", Consolas, monospace, serif;
 	}
 
 	div.key > span:hover {
