@@ -1,22 +1,25 @@
 <script>
 	import mime from "mime";
-	import BrokenImage from "../assets/svg/BrokenImage.svelte";
-	import {readRecursively} from "../GlobalState.js";
+	import {readRecursively, slideshowDelays} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
 	import {ALLOWED_MIME_TYPES} from "../Constants.js";
 	import {convertItemsIntoFiles, wrapIndex} from "../Helpers.js";
 	import Toast from "./Toast.svelte";
+	import EmptyMediaError from "./EmptyMediaError.svelte";
 
 	export let focused = false;
 	export let randomId;
 
-	let toast;
+	let toast, folderFileInput, fileFileInput;
 
-	let folderFileInput, fileFileInput;
 	let loadRecursively = false;
-
 	readRecursively.subscribe(val => {
-		loadRecursively = val
+		loadRecursively = val;
+	});
+
+	let slideshowTimes;
+	slideshowDelays.subscribe(val => {
+		slideshowTimes = val;
 	});
 
 	let loadedFiles = [];
@@ -70,7 +73,6 @@
 
 	function switchFileIndex(newIndex) {
 		newIndex = wrapIndex(loadedFiles, newIndex);
-
 		const newFile = loadedFiles[newIndex];
 		if (!newFile) {
 			return;
@@ -107,19 +109,68 @@
 		switch (event.key) {
 			case "a":
 				if (!handledByPlayer) {
-					switchFileIndex(currentFileIndex - 1);
+					switchLeft();
 				}
 				break;
 			case "d":
 				if (!handledByPlayer) {
-					switchFileIndex(currentFileIndex + 1);
+					switchRight();
 				}
+				break;
+			case "s":
+				toggleSlideshow();
 				break;
 			default:
 				break;
 		}
 	}
 
+	function switchLeft() {
+		interruptSlideshowNext();
+		switchFileIndex(currentFileIndex - 1);
+	}
+
+	function switchRight() {
+		interruptSlideshowNext();
+		switchFileIndex(currentFileIndex + 1);
+	}
+
+
+	let slideshowInterval = null;
+	let slideshowNextTimeout = null;
+
+	function toggleSlideshow() {
+		if (slideshowInterval !== null) {
+			clearInterval(slideshowInterval);
+			slideshowInterval = null;
+			interruptSlideshowNext();
+
+			toast.show("Slideshow stopped");
+			return;
+		}
+
+		const imageDelay = slideshowTimes.imageWait;
+		const videoDelay = slideshowTimes.videoWait;
+
+		slideshowInterval = setInterval(() => {
+			const mediaPlayerPlayed = mediaPlayerExposedFunctions.hasPlayed();
+
+			if (mediaPlayerPlayed && slideshowNextTimeout === null) {
+				slideshowNextTimeout = setTimeout(() => {
+					slideshowNextTimeout = null;
+					switchRight();
+				}, mediaPlayerPlayed === "imageWait" ? imageDelay : videoDelay);
+			}
+		}, 100);
+		toast.show("Slideshow started", `(${Math.floor(imageDelay / 1000)}s & ${Math.floor(videoDelay / 1000)}s)`);
+	}
+
+	function interruptSlideshowNext() {
+		if (slideshowNextTimeout !== null) {
+			clearTimeout(slideshowNextTimeout);
+			slideshowNextTimeout = null;
+		}
+	}
 
 	function onDragOver(event) {
 		event.preventDefault();
@@ -153,8 +204,7 @@
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
 <div class="view" class:focused={focused} class:dragging={dragging} on:click on:dragover={onDragOver}
-	 on:dragleave={onDragLeave} on:dragenter={onDragEnter}
-	 on:drop={onDragDrop}>
+	 on:dragleave={onDragLeave} on:dragenter={onDragEnter} on:drop={onDragDrop}>
 	<input type="file" bind:this={folderFileInput} on:change={() => {onFilesInput(folderFileInput.files, true);}}
 		   webkitdirectory
 		   mozdirectory directory
@@ -165,19 +215,7 @@
 	<Toast bind:exposedFunctions={toast}/>
 
 	{#if loadedFiles.length === 0}
-		<div class="emptyMedia">
-			<BrokenImage/>
-
-			<span>No media loaded.</span><br>
-			<span>Drag & Drop a folder or media file in here.</span>
-			<br><br>
-
-			<span>Or alternatively:</span><br>
-			<div>
-				<button on:click={() => {folderFileInput.click();}}>Open folder</button>
-				<button on:click={() => {fileFileInput.click();}}>Open file</button>
-			</div>
-		</div>
+		<EmptyMediaError folderFileInput={folderFileInput} fileFileInput={fileFileInput}/>
 
 	{:else if (loadedFiles[currentFileIndex] && loadedFiles[currentFileIndex].objectUrl)}
 		<MediaPlayer mimeType={loadedFiles[currentFileIndex].mime} url={loadedFiles[currentFileIndex].objectUrl}
@@ -189,20 +227,7 @@
 <style>
 	.view {
 		position: relative;
-	}
-
-	.emptyMedia {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-	}
-
-	.emptyMedia br {
-		display: block;
-		content: " ";
-		margin-top: 5px;
+		background-color: var(--global-background-color);
 	}
 
 	.focused {

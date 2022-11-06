@@ -37,6 +37,7 @@
 	<ExplainedKey key="a" description="Go to the next image"/>
 	<ExplainedKey key="d" description="Go to the next image"/>
 
+	<ExplainedKey key="s" description="Start/Stop slideshow"/>
 	<ExplainedKey key="h" description="Show/Hide this help"/>
 </div>
 

@@ -23,6 +23,7 @@
 	let videoPlayer;
 	let videoPlayerPlyr;
 	let videoDefaultVolume;
+	let videoHasPlayed = false;
 
 	defaultVolume.subscribe(val => {
 		videoDefaultVolume = val;
@@ -67,6 +68,12 @@
 				storage: {enabled: true, key: "plyr-" + splitViewId}, // Each view gets its own storage keys
 				volume: videoDefaultVolume
 			});
+
+			videoPlayerPlyr.on("ended", () => {
+				videoHasPlayed = true;
+				videoPlayerPlyr.play();
+			});
+			videoHasPlayed = false;
 		}
 	});
 
@@ -117,6 +124,17 @@
 			}
 
 			return false; // true if handled
+		},
+		hasPlayed: () => {
+			if (!videoPlayerPlyr) {
+				return "imageWait";
+			}
+
+			if (videoHasPlayed) {
+				videoHasPlayed = false;
+				return "videoWait";
+			}
+			return null;
 		}
 	};
 
@@ -142,12 +160,12 @@
 			<img class="mediaImage" src={url} alt={displayFileName}/>
 
 		{:else if (renderType === "video")}
-			<video playsinline controls autoplay loop bind:this={videoPlayer}>
+			<video playsinline controls autoplay bind:this={videoPlayer}>
 				<source src={url} type={translateMimeType(mimeType)}/>
 			</video>
 
 		{:else if (renderType === "audio")}
-			<audio controls autoplay loop bind:this={videoPlayer}>
+			<audio controls autoplay bind:this={videoPlayer}>
 				<source src={url} type={translateMimeType(mimeType)}/>
 			</audio>
 
