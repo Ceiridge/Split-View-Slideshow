@@ -2,7 +2,11 @@
 	import Plyr from "plyr";
 	import ExplainedKey from "./ExplainedKey.svelte";
 
-	const supportsWebApis = "webkitRelativePath" in File.prototype && crypto && "randomUUID" in crypto && Plyr.supported('video', 'html5', true);
+	const supportsWebApis =
+		"webkitRelativePath" in File.prototype
+		&& crypto && "randomUUID" in crypto
+		&& Plyr.supported('video', 'html5', true)
+		&& "DataTransferItem" in window && "webkitGetAsEntry" in DataTransferItem.prototype;
 </script>
 
 <a href="https://github.com/Ceiridge/Split-View-Slideshow" target="_blank" rel="noreferrer"><h1>Split View
@@ -24,27 +28,30 @@
 	<ExplainedKey key="n" description="Open a new split view media player"/>
 	<ExplainedKey key="del" special={true} description="Close the focused split view"/>
 
-	<ExplainedKey key="a" description="Switch active split view focus to the left"/>
-	<ExplainedKey key="d" description="Switch active split view focus to the right"/>
+	<ExplainedKey key="q" description="Switch active split view focus to the left"/>
+	<ExplainedKey key="e" description="Switch active split view focus to the right"/>
 
-	<ExplainedKey modifierKeys={["ctrl"]} key="a" description="Switch active split view focus to the left"/>
-	<ExplainedKey modifierKeys={["ctrl"]} key="d" description="Switch active split view focus to the right"/>
+	<ExplainedKey modifierKeys={["ctrl"]} key="q" description="Switch active split view focus to the left"/>
+	<ExplainedKey modifierKeys={["ctrl"]} key="e" description="Switch active split view focus to the right"/>
 
-	<ExplainedKey key="left" special={true} description="Go to the next image"/>
-	<ExplainedKey key="right" special={true} description="Go to the next image"/>
+	<ExplainedKey key="a" special={true} description="Go to the next image"/>
+	<ExplainedKey key="d" special={true} description="Go to the next image"/>
 
 	<ExplainedKey key="h" description="Show/Hide this help"/>
 </div>
 
 <h3>Standard Media Keys:</h3>
 <div class="keyExplainer">
-	<ExplainedKey key="j" description="Seek 5s forward"/>
-	<ExplainedKey key="l" description="Seek 5s backward"/>
+	<ExplainedKey key="left" description="Seek 5s backward"/>
+	<ExplainedKey key="right" description="Seek 5s forward"/>
+
+	<ExplainedKey key="j" description="Seek 10s backward"/>
+	<ExplainedKey key="l" description="Seek 10s forward"/>
 
 	<ExplainedKey key="up" special={true} description="Increase video volume"/>
 	<ExplainedKey key="down" special={true} description="Decrease video volume"/>
 
-	<ExplainedKey key="k" description="Play/Pause video"/>
+	<ExplainedKey key="k" alternativeKeys={["space"]} description="Play/Pause video"/>
 	<ExplainedKey key="m" description="Mute/Unmute video"/>
 
 	<ExplainedKey key="+" special={true} description="Increase video speed"/>

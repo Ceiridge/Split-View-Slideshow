@@ -75,9 +75,15 @@
 			if (videoPlayerPlyr) {
 				switch (key) {
 					case 'l':
-						videoPlayerPlyr.forward();
+						videoPlayerPlyr.forward(10);
 						return true;
 					case 'j':
+						videoPlayerPlyr.rewind(10);
+						return true;
+					case 'ArrowRight':
+						videoPlayerPlyr.forward();
+						return true;
+					case 'ArrowLeft':
 						videoPlayerPlyr.rewind();
 						return true;
 
@@ -113,6 +119,21 @@
 			return false; // true if handled
 		}
 	};
+
+	function translateMimeType(mime) {
+		switch (mime) {
+			case "video/x-matroska": // Force MKV files to play
+				mime = "video/webm";
+				break;
+			case "audio/x-matroska":
+				mime = "audio/webm";
+				break;
+			default:
+				break;
+		}
+
+		return mime;
+	}
 </script>
 
 <div class="mediaPlayer" bind:this={mediaPlayerElement}>
@@ -122,12 +143,12 @@
 
 		{:else if (renderType === "video")}
 			<video playsinline controls autoplay loop bind:this={videoPlayer}>
-				<source src={url} type={mimeType}/>
+				<source src={url} type={translateMimeType(mimeType)}/>
 			</video>
 
 		{:else if (renderType === "audio")}
 			<audio controls autoplay loop bind:this={videoPlayer}>
-				<source src={url} type={mimeType}/>
+				<source src={url} type={translateMimeType(mimeType)}/>
 			</audio>
 
 		{/if}

@@ -3,6 +3,7 @@
 	export let description;
 	export let special = false;
 	export let modifierKeys = [];
+	export let alternativeKeys = [];
 </script>
 
 <div class="explainedKey">
@@ -17,6 +18,14 @@
 	<div class="{'key' + (special ? ' special' : '')}">
 		<span>{key}</span>
 	</div>
+
+	{#each alternativeKeys as alternative}
+		/
+
+		<div class="key special">
+			<span>{alternative}</span>
+		</div>
+	{/each}
 
 	{#if (description && description.length > 0)}
 		&ndash; {description}

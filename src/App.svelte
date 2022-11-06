@@ -1,4 +1,5 @@
 <script>
+	import {onMount} from "svelte";
 	import KeyExplainer from "./lib/KeyExplainer.svelte";
 	import SplitViewManager from "./lib/SplitViewManager.svelte";
 	import {resetTrigger} from "./GlobalState.js";
@@ -18,6 +19,15 @@
 	let resetTriggerKey;
 	resetTrigger.subscribe(val => {
 		resetTriggerKey = val
+	});
+
+	onMount(() => {
+		// Clean up old plyr keys
+		for (const storageKey in window.localStorage) {
+			if (storageKey && storageKey.startsWith("plyr-")) {
+				window.localStorage.removeItem(storageKey);
+			}
+		}
 	});
 </script>
 

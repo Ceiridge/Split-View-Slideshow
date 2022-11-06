@@ -33,7 +33,7 @@
 				popFocusedView();
 				event.preventDefault();
 				break;
-			case "a":
+			case "q":
 				if (event.ctrlKey) {
 					swapView(focusedViewIndex, true);
 				}
@@ -41,7 +41,7 @@
 
 				event.preventDefault();
 				break;
-			case "d":
+			case "e":
 				if (event.ctrlKey) {
 					swapView(focusedViewIndex, false);
 				}

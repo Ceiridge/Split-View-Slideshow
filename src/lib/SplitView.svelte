@@ -1,11 +1,12 @@
 <script>
+	import mime from "mime";
 	import {fade} from "svelte/transition";
 	import {cubicInOut} from "svelte/easing";
 	import BrokenImage from "../assets/svg/BrokenImage.svelte";
 	import {readRecursively} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
 	import {ALLOWED_MIME_TYPES} from "../Constants.js";
-	import {wrapIndex} from "../Helpers.js";
+	import {convertItemsIntoFiles, wrapIndex} from "../Helpers.js";
 
 	export let focused = false;
 	export let randomId;
@@ -35,7 +36,6 @@
 		return wkPath;
 	}
 
-	// TODO: Drag & Drop
 	function onFilesInput(files, isFromFolder) {
 		if (!files || files.length === 0) {
 			return;
@@ -57,11 +57,13 @@
 			}
 
 			// Only allowed mime types
-			return recursiveCheck && file.type && ALLOWED_MIME_TYPES.some(allowedType => file.type.startsWith(allowedType));
+			const mimeType = mime.getType(file.name);
+			return recursiveCheck && mimeType && ALLOWED_MIME_TYPES.some(allowedType => mimeType.startsWith(allowedType));
 		}).map(file => ({
 			file,
 			objectUrl: null,
-			path: file.name
+			path: file.name,
+			mime: mime.getType(file.name)
 		}));
 		switchFileIndex(0);
 		console.log(loadedFiles);
@@ -112,12 +114,12 @@
 		}
 
 		switch (event.key) {
-			case "ArrowLeft":
+			case "a":
 				if (!handledByPlayer) {
 					switchFileIndex(currentFileIndex - 1);
 				}
 				break;
-			case "ArrowRight":
+			case "d":
 				if (!handledByPlayer) {
 					switchFileIndex(currentFileIndex + 1);
 				}
@@ -126,11 +128,42 @@
 				break;
 		}
 	}
+
+	function onDragOver(event) {
+		event.preventDefault();
+	}
+
+	let dragging = false;
+
+	function onDragEnter(event) {
+		event.preventDefault();
+		dragging = true;
+	}
+
+	function onDragLeave() {
+		dragging = false;
+	}
+
+	async function onDragDrop(event) {
+		dragging = false;
+		event.preventDefault();
+
+		let itemEntries = [];
+		for (const item of event.dataTransfer.items) {
+			itemEntries.push(item.webkitGetAsEntry());
+		}
+
+		const files = await convertItemsIntoFiles(itemEntries, loadRecursively);
+		console.log(files);
+		onFilesInput(files, false);
+	}
 </script>
 
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
-<div class="view" class:focused={focused} on:click>
+<div class="view" class:focused={focused} class:dragging={dragging} on:click on:dragover={onDragOver}
+	 on:dragleave={onDragLeave} on:dragenter={onDragEnter}
+	 on:drop={onDragDrop}>
 	<input type="file" bind:this={folderFileInput} on:change={() => {onFilesInput(folderFileInput.files, true);}}
 		   webkitdirectory
 		   mozdirectory directory
@@ -165,7 +198,7 @@
 			</span>
 		{/if}
 
-		<MediaPlayer mimeType={loadedFiles[currentFileIndex].file.type} url={loadedFiles[currentFileIndex].objectUrl}
+		<MediaPlayer mimeType={loadedFiles[currentFileIndex].mime} url={loadedFiles[currentFileIndex].objectUrl}
 					 displayFileName={loadedFiles[currentFileIndex].path} splitViewId={randomId}
 					 bind:exposedFunctions={mediaPlayerExposedFunctions}/>
 	{/if}
@@ -217,5 +250,9 @@
 		to {
 			box-shadow: inset 0 0 2px 3px rgba(15, 153, 70, 0);
 		}
+	}
+
+	.dragging {
+		box-shadow: inset 0 0 30px 3px #198aed;
 	}
 </style>

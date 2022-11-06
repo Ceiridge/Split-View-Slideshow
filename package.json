@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@vidstack/player": "^1.6.4",
+    "mime": "^3.0.0",
     "plyr": "^3.7.2",
     "split.js": "^1.6.5"
   }
