@@ -31,10 +31,10 @@
 				popFocusedView();
 				break;
 			case "a":
-				switchFocus(true);
+				switchFocusTo(focusedViewIndex - 1);
 				break;
 			case "d":
-				switchFocus(false);
+				switchFocusTo(focusedViewIndex + 1);
 				break;
 			default:
 				break;
@@ -54,7 +54,7 @@
 		// Insert at focused index
 		views.splice(focusedViewIndex + 1, 0, newViewObject);
 		views = views;
-		switchFocus(false);
+		switchFocusTo(focusedViewIndex - 1);
 	}
 
 	function popFocusedView() {
@@ -64,18 +64,10 @@
 		}
 
 		views = views.filter(view => view !== views[focusedViewIndex]);
-		switchFocus(true);
+		switchFocusTo(focusedViewIndex + 1);
 	}
 
-	function switchFocus(left) {
-		let newIndex = focusedViewIndex;
-
-		if (left) {
-			newIndex--;
-		} else {
-			newIndex++;
-		}
-
+	function switchFocusTo(newIndex) {
 		if (newIndex < 0) {
 			newIndex = views.length - 1;
 		} else if (newIndex >= views.length) {
@@ -93,7 +85,7 @@
 
 <div class="splitviews" bind:this={splitViews}>
 	{#each views as view, i (view.randomId)}
-		<SplitView focused={i === focusedViewIndex}/>
+		<SplitView focused={i === focusedViewIndex} randomId={view.randomId} on:click={() => {switchFocusTo(i);}}/>
 	{/each}
 </div>
 

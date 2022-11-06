@@ -1,10 +1,12 @@
 <script>
 	import Plyr from "plyr";
 	import {afterUpdate} from "svelte";
+	import {defaultVolume} from "../GlobalState.js";
 
 	export let mimeType;
 	export let url;
 	export let displayFileName;
+	export let splitViewId;
 
 	let renderType;
 	$: {
@@ -19,14 +21,24 @@
 
 	let mediaPlayerElement;
 	let videoPlayer;
-	let videoPlayerPlyr; // TODO: Fix object-fit contain of this player and duplicates/missing video elements
+	let videoPlayerPlyr;
+	let videoDefaultVolume;
+
+	defaultVolume.subscribe(val => {
+		videoDefaultVolume = val;
+	});
 
 	afterUpdate(() => {
 		if (videoPlayerPlyr) {
 			videoPlayerPlyr.destroy();
 			videoPlayerPlyr = null;
 
-			for (const videoElement of mediaPlayerElement.getElementsByTagName("video")) {
+			// Clear up video elements appended again by Plyr
+			for (const videoElement of mediaPlayerElement.querySelectorAll("video, audio")) {
+				if (videoElement === videoPlayer) {
+					continue;
+				}
+
 				mediaPlayerElement.removeChild(videoElement);
 			}
 		}
@@ -51,7 +63,9 @@
 					"volume", // Volume control
 					"settings" // Settings menu
 				],
-				keyboard: {focused: false, global: false} // No default key bindings
+				keyboard: {focused: false, global: false}, // No default key bindings
+				storage: {enabled: true, key: "plyr-" + splitViewId}, // Each view gets its own storage keys
+				volume: videoDefaultVolume
 			});
 		}
 	});
@@ -102,19 +116,22 @@
 </script>
 
 <div class="mediaPlayer" bind:this={mediaPlayerElement}>
-	{#if (renderType === "img")}
-		<img class="mediaImage" src={url} alt={displayFileName}/>
+	{#key url}
+		{#if (renderType === "img")}
+			<img class="mediaImage" src={url} alt={displayFileName}/>
 
-	{:else if (renderType === "video")}
-		<video playsinline controls autoplay loop bind:this={videoPlayer}>
-			<source src={url} type={mimeType}/>
-		</video>
+		{:else if (renderType === "video")}
+			<video playsinline controls autoplay loop bind:this={videoPlayer}>
+				<source src={url} type={mimeType}/>
+			</video>
 
-	{:else if (renderType === "audio")}
-		<audio controls autoplay loop bind:this={videoPlayer}>
-			<source src={url} type={mimeType}/>
-		</audio>
-	{/if}
+		{:else if (renderType === "audio")}
+			<audio controls autoplay loop bind:this={videoPlayer}>
+				<source src={url} type={mimeType}/>
+			</audio>
+
+		{/if}
+	{/key}
 </div>
 
 <style>
@@ -130,5 +147,10 @@
 		width: 100%;
 		max-height: 100%;
 		object-fit: contain;
+	}
+
+	:global(.plyr video) {
+		height: 100vh !important;
+	<!-- This might cause problems in the future if there are vertical split views -->
 	}
 </style>

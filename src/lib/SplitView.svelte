@@ -7,6 +7,7 @@
 	import {ALLOWED_MIME_TYPES} from "../Constants.js";
 
 	export let focused = false;
+	export let randomId;
 
 	let folderFileInput, fileFileInput;
 	let loadRecursively = false;
@@ -132,7 +133,7 @@
 
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
-<div class="view" class:focused={focused}>
+<div class="view" class:focused={focused} on:click>
 	<input type="file" bind:this={folderFileInput} on:change={() => {onFilesInput(folderFileInput.files, true);}}
 		   webkitdirectory
 		   mozdirectory directory
@@ -168,7 +169,7 @@
 		{/if}
 
 		<MediaPlayer mimeType={loadedFiles[currentFileIndex].file.type} url={loadedFiles[currentFileIndex].objectUrl}
-					 displayFileName={loadedFiles[currentFileIndex].path}
+					 displayFileName={loadedFiles[currentFileIndex].path} splitViewId={randomId}
 					 bind:exposedFunctions={mediaPlayerExposedFunctions}/>
 	{/if}
 </div>
