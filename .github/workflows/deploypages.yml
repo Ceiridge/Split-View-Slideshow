@@ -1,0 +1,32 @@
+name: Build and Deploy to Pages
+on:
+  push:
+    branches:
+      - master
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    env:
+      CI: false
+    strategy:
+      matrix:
+        node-version: [16]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # The folder the action should deploy.
+          branch: gh-pages
