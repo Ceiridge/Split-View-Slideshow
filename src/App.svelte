@@ -1,6 +1,7 @@
 <script>
 	import KeyExplainer from "./lib/KeyExplainer.svelte";
 	import SplitViewManager from "./lib/SplitViewManager.svelte";
+	import {resetTrigger} from "./GlobalState.js";
 
 	let showExplainer = true;
 
@@ -13,12 +14,19 @@
 				break;
 		}
 	}
+
+	let resetTriggerKey;
+	resetTrigger.subscribe(val => {
+		resetTriggerKey = val
+	});
 </script>
 
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
 <main>
-	<SplitViewManager/>
+	{#key resetTriggerKey}
+		<SplitViewManager/>
+	{/key}
 
 	<div class="keyExplainer" style:display={showExplainer ? "inherit" : "none"}>
 		<KeyExplainer/>

@@ -2,7 +2,7 @@
 	import Plyr from "plyr";
 	import ExplainedKey from "./ExplainedKey.svelte";
 
-	const supportsWebApis = "webkitRelativePath" in File.prototype && Plyr.supported('video', 'html5', true);
+	const supportsWebApis = "webkitRelativePath" in File.prototype && crypto && "randomUUID" in crypto && Plyr.supported('video', 'html5', true);
 	// TODO: Move split views with CTRL
 </script>
 

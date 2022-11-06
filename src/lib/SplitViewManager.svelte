@@ -2,6 +2,7 @@
 	import {beforeUpdate, afterUpdate} from "svelte";
 	import Split from "split.js";
 	import SplitView from "./SplitView.svelte";
+	import {resetTrigger} from "../GlobalState.js";
 
 	let splitViews;
 	let views = [];
@@ -27,9 +28,7 @@
 				addView();
 				break;
 			case "Delete":
-				if (views.length > 1) {
-					popFocusedView();
-				}
+				popFocusedView();
 				break;
 			case "a":
 				switchFocus(true);
@@ -43,7 +42,9 @@
 	}
 
 	function addView() {
-		const newViewObject = {}; // TODO: Removing the wrong views
+		const newViewObject = {
+			randomId: crypto.randomUUID()
+		};
 
 		if (views.length === 0) {
 			views.push(newViewObject);
@@ -57,6 +58,11 @@
 	}
 
 	function popFocusedView() {
+		if (views.length === 1) {
+			resetTrigger.set(crypto.randomUUID()); // Trigger a reset
+			return;
+		}
+
 		views = views.filter(view => view !== views[focusedViewIndex]);
 		switchFocus(true);
 	}
@@ -86,8 +92,8 @@
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
 <div class="splitviews" bind:this={splitViews}>
-	{#each views as view, i}
-		<SplitView focused={i === focusedViewIndex} {...view}/>
+	{#each views as view, i (view.randomId)}
+		<SplitView focused={i === focusedViewIndex}/>
 	{/each}
 </div>
 

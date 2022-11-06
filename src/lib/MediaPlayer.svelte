@@ -1,6 +1,6 @@
 <script>
 	import Plyr from "plyr";
-	import {afterUpdate, beforeUpdate} from "svelte";
+	import {afterUpdate} from "svelte";
 
 	export let mimeType;
 	export let url;
@@ -10,7 +10,7 @@
 	$: {
 		if (mimeType.startsWith("image/")) {
 			renderType = "img";
-		} else if (mimeType.startsWith("video/")) { // TODO
+		} else if (mimeType.startsWith("video/")) {
 			renderType = "video";
 		} else if (mimeType.startsWith("audio/")) {
 			renderType = "audio";
@@ -104,12 +104,16 @@
 <div class="mediaPlayer" bind:this={mediaPlayerElement}>
 	{#if (renderType === "img")}
 		<img class="mediaImage" src={url} alt={displayFileName}/>
+
 	{:else if (renderType === "video")}
 		<video playsinline controls autoplay loop bind:this={videoPlayer}>
 			<source src={url} type={mimeType}/>
 		</video>
-	{:else if (renderType === "audio")}
 
+	{:else if (renderType === "audio")}
+		<audio controls autoplay loop bind:this={videoPlayer}>
+			<source src={url} type={mimeType}/>
+		</audio>
 	{/if}
 </div>
 
