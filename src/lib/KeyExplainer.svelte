@@ -1,7 +1,9 @@
 <script>
+	import Plyr from "plyr";
 	import ExplainedKey from "./ExplainedKey.svelte";
 
-	const supportsWebApis = "webkitRelativePath" in File.prototype;
+	const supportsWebApis = "webkitRelativePath" in File.prototype && Plyr.supported('video', 'html5', true);
+	// TODO: Move split views with CTRL
 </script>
 
 <a href="https://github.com/Ceiridge/Split-View-Slideshow" target="_blank" rel="noreferrer"><h1>Split View
@@ -26,16 +28,27 @@
 	<ExplainedKey key="a" description="Switch active split view focus to the left"/>
 	<ExplainedKey key="d" description="Switch active split view focus to the right"/>
 
-	<ExplainedKey key="left" special={true} description="Seek 5s forward or go to the next image"/>
-	<ExplainedKey key="right" special={true} description="Seek 5s backward or go to the next image"/>
+	<ExplainedKey key="left" special={true} description="Go to the next image"/>
+	<ExplainedKey key="right" special={true} description="Go to the next image"/>
 
 	<ExplainedKey key="h" description="Show/Hide this help"/>
 </div>
 
 <h3>Standard Media Keys:</h3>
 <div class="keyExplainer">
-	<ExplainedKey key="j" description="Seek 10s forward"/>
-	<ExplainedKey key="l" description="Seek 10s backward"/>
+	<ExplainedKey key="j" description="Seek 5s forward"/>
+	<ExplainedKey key="l" description="Seek 5s backward"/>
+
+	<ExplainedKey key="up" special={true} description="Increase video volume"/>
+	<ExplainedKey key="down" special={true} description="Decrease video volume"/>
+
+	<ExplainedKey key="k" description="Play/Pause video"/>
+	<ExplainedKey key="m" description="Mute/Unmute video"/>
+
+	<ExplainedKey key="+" special={true} description="Increase video speed"/>
+	<ExplainedKey key="-" special={true} description="Decrease video speed"/>
+	<ExplainedKey key="0" description="Default video speed"/>
+
 </div>
 
 <style>
