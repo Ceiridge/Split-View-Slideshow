@@ -3,6 +3,7 @@
 	import Split from "split.js";
 	import SplitView from "./SplitView.svelte";
 	import {resetTrigger} from "../GlobalState.js";
+	import {wrapIndex} from "../Helpers.js";
 
 	let splitViews;
 	let views = [];
@@ -26,15 +27,27 @@
 		switch (event.key) {
 			case "n":
 				addView();
+				event.preventDefault();
 				break;
 			case "Delete":
 				popFocusedView();
+				event.preventDefault();
 				break;
 			case "a":
+				if (event.ctrlKey) {
+					swapView(focusedViewIndex, true);
+				}
 				switchFocusTo(focusedViewIndex - 1);
+
+				event.preventDefault();
 				break;
 			case "d":
+				if (event.ctrlKey) {
+					swapView(focusedViewIndex, false);
+				}
 				switchFocusTo(focusedViewIndex + 1);
+
+				event.preventDefault();
 				break;
 			default:
 				break;
@@ -68,16 +81,27 @@
 	}
 
 	function switchFocusTo(newIndex) {
-		if (newIndex < 0) {
-			newIndex = views.length - 1;
-		} else if (newIndex >= views.length) {
-			newIndex = 0;
-		}
+		newIndex = wrapIndex(views, newIndex);
 
 		if (newIndex !== focusedViewIndex) {
 			console.log("Switched to new index " + newIndex);
 			focusedViewIndex = newIndex;
 		}
+	}
+
+	function swapView(index, left) {
+		index = wrapIndex(views, index);
+		let targetIndex = index;
+
+		if (left) {
+			targetIndex--;
+		} else {
+			targetIndex++;
+		}
+		targetIndex = wrapIndex(views, targetIndex);
+
+		[views[index], views[targetIndex]] = [views[targetIndex], views[index]];
+		views = views;
 	}
 </script>
 

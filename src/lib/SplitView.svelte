@@ -5,6 +5,7 @@
 	import {readRecursively} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
 	import {ALLOWED_MIME_TYPES} from "../Constants.js";
+	import {wrapIndex} from "../Helpers.js";
 
 	export let focused = false;
 	export let randomId;
@@ -67,11 +68,7 @@
 	}
 
 	function switchFileIndex(newIndex) {
-		if (newIndex < 0) {
-			newIndex = loadedFiles.length - 1;
-		} else if (newIndex >= loadedFiles.length) {
-			newIndex = 0;
-		}
+		newIndex = wrapIndex(loadedFiles, newIndex);
 
 		const newFile = loadedFiles[newIndex];
 		if (!newFile) {

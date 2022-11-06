@@ -3,7 +3,6 @@
 	import ExplainedKey from "./ExplainedKey.svelte";
 
 	const supportsWebApis = "webkitRelativePath" in File.prototype && crypto && "randomUUID" in crypto && Plyr.supported('video', 'html5', true);
-	// TODO: Move split views with CTRL
 </script>
 
 <a href="https://github.com/Ceiridge/Split-View-Slideshow" target="_blank" rel="noreferrer"><h1>Split View
@@ -27,6 +26,9 @@
 
 	<ExplainedKey key="a" description="Switch active split view focus to the left"/>
 	<ExplainedKey key="d" description="Switch active split view focus to the right"/>
+
+	<ExplainedKey modifierKeys={["ctrl"]} key="a" description="Switch active split view focus to the left"/>
+	<ExplainedKey modifierKeys={["ctrl"]} key="d" description="Switch active split view focus to the right"/>
 
 	<ExplainedKey key="left" special={true} description="Go to the next image"/>
 	<ExplainedKey key="right" special={true} description="Go to the next image"/>

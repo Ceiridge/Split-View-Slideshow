@@ -2,9 +2,18 @@
 	export let key;
 	export let description;
 	export let special = false;
+	export let modifierKeys = [];
 </script>
 
 <div class="explainedKey">
+	{#each modifierKeys as modifier}
+		<div class="key special">
+			<span>{modifier}</span>
+		</div>
+
+		+
+	{/each}
+
 	<div class="{'key' + (special ? ' special' : '')}">
 		<span>{key}</span>
 	</div>

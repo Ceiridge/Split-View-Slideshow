@@ -150,7 +150,6 @@
 	}
 
 	:global(.plyr video) {
-		height: 100vh !important;
-	<!-- This might cause problems in the future if there are vertical split views -->
+		height: 100vh !important; /* This might cause problems in the future if there are vertical split views */
 	}
 </style>
