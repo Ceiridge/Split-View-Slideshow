@@ -95,6 +95,8 @@
 	}
 
 	let mediaPlayerExposedFunctions;
+	let hasAnyMediaLoaded = false;
+	$: hasAnyMediaLoaded = loadedFiles.length !== 0;
 
 	function onGlobalKeyDown(event) {
 		if (!focused) {
@@ -108,17 +110,19 @@
 
 		switch (event.key) {
 			case "a":
-				if (!handledByPlayer) {
+				if (!handledByPlayer && hasAnyMediaLoaded) {
 					switchLeft();
 				}
 				break;
 			case "d":
-				if (!handledByPlayer) {
+				if (!handledByPlayer && hasAnyMediaLoaded) {
 					switchRight();
 				}
 				break;
 			case "s":
-				toggleSlideshow();
+				if (hasAnyMediaLoaded) {
+					toggleSlideshow();
+				}
 				break;
 			default:
 				break;
@@ -214,7 +218,7 @@
 
 	<Toast bind:exposedFunctions={toast}/>
 
-	{#if loadedFiles.length === 0}
+	{#if !hasAnyMediaLoaded}
 		<EmptyMediaError folderFileInput={folderFileInput} fileFileInput={fileFileInput}/>
 
 	{:else if (loadedFiles[currentFileIndex] && loadedFiles[currentFileIndex].objectUrl)}

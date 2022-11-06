@@ -8,13 +8,13 @@
 	<BrokenImage/>
 
 	<span>No media loaded.</span><br>
-	<span>Drag & Drop a folder or media file in here.</span>
+	<span>Drag & Drop a folder or media file(s) in here.</span>
 	<br><br>
 
 	<span>Or alternatively:</span><br>
 	<div>
 		<button on:click={() => {folderFileInput.click();}}>Open folder</button>
-		<button on:click={() => {fileFileInput.click();}}>Open file</button>
+		<button on:click={() => {fileFileInput.click();}}>Open file(s)</button>
 	</div>
 </div>
 
