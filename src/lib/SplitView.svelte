@@ -1,20 +1,19 @@
 <script>
 	import mime from "mime";
-	import {fade} from "svelte/transition";
-	import {cubicInOut} from "svelte/easing";
 	import BrokenImage from "../assets/svg/BrokenImage.svelte";
 	import {readRecursively} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
 	import {ALLOWED_MIME_TYPES} from "../Constants.js";
 	import {convertItemsIntoFiles, wrapIndex} from "../Helpers.js";
+	import Toast from "./Toast.svelte";
 
 	export let focused = false;
 	export let randomId;
 
+	let toast;
+
 	let folderFileInput, fileFileInput;
 	let loadRecursively = false;
-	let showFilePosition = false;
-	let showFilePositionTimeout = null;
 
 	readRecursively.subscribe(val => {
 		loadRecursively = val
@@ -82,15 +81,7 @@
 		}
 
 		currentFileIndex = newIndex;
-		showFilePosition = true;
-
-		if (showFilePositionTimeout !== null) {
-			clearTimeout(showFilePositionTimeout);
-		}
-		showFilePositionTimeout = setTimeout(() => {
-			showFilePosition = false;
-			showFilePositionTimeout = null;
-		}, 1500);
+		toast.show(newFile.path, `(${currentFileIndex + 1}/${loadedFiles.length})`);
 	}
 
 	function cleanup() {
@@ -129,6 +120,7 @@
 		}
 	}
 
+
 	function onDragOver(event) {
 		event.preventDefault();
 	}
@@ -154,7 +146,6 @@
 		}
 
 		const files = await convertItemsIntoFiles(itemEntries, loadRecursively);
-		console.log(files);
 		onFilesInput(files, false);
 	}
 </script>
@@ -170,6 +161,8 @@
 		   style="display: none"/>
 	<input type="file" bind:this={fileFileInput} on:change={() => {onFilesInput(fileFileInput.files, false);}} multiple
 		   style="display: none"/>
+
+	<Toast bind:exposedFunctions={toast}/>
 
 	{#if loadedFiles.length === 0}
 		<div class="emptyMedia">
@@ -187,17 +180,6 @@
 		</div>
 
 	{:else if (loadedFiles[currentFileIndex] && loadedFiles[currentFileIndex].objectUrl)}
-		{#if showFilePosition}
-			<span class="filePositionInfo" in:fade={{delay: 0, duration: 250, easing: cubicInOut}}
-				  out:fade={{delay: 3250, duration: 250, easing: cubicInOut}}>
-				{loadedFiles[currentFileIndex].path}
-
-				<span class="filePositionInfoState">
-					({currentFileIndex + 1}/{loadedFiles.length})
-				</span>
-			</span>
-		{/if}
-
 		<MediaPlayer mimeType={loadedFiles[currentFileIndex].mime} url={loadedFiles[currentFileIndex].objectUrl}
 					 displayFileName={loadedFiles[currentFileIndex].path} splitViewId={randomId}
 					 bind:exposedFunctions={mediaPlayerExposedFunctions}/>
@@ -221,20 +203,6 @@
 		display: block;
 		content: " ";
 		margin-top: 5px;
-	}
-
-	.filePositionInfo {
-		position: absolute;
-		left: 0;
-		top: 0;
-		z-index: 2;
-		padding: 5px;
-
-		background-color: rgba(0, 0, 0, 0.5);
-	}
-
-	.filePositionInfoState {
-		color: #949494;
 	}
 
 	.focused {

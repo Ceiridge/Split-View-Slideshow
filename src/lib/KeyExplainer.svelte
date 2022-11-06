@@ -34,16 +34,16 @@
 	<ExplainedKey modifierKeys={["ctrl"]} key="q" description="Switch active split view focus to the left"/>
 	<ExplainedKey modifierKeys={["ctrl"]} key="e" description="Switch active split view focus to the right"/>
 
-	<ExplainedKey key="a" special={true} description="Go to the next image"/>
-	<ExplainedKey key="d" special={true} description="Go to the next image"/>
+	<ExplainedKey key="a" description="Go to the next image"/>
+	<ExplainedKey key="d" description="Go to the next image"/>
 
 	<ExplainedKey key="h" description="Show/Hide this help"/>
 </div>
 
 <h3>Standard Media Keys:</h3>
 <div class="keyExplainer">
-	<ExplainedKey key="left" description="Seek 5s backward"/>
-	<ExplainedKey key="right" description="Seek 5s forward"/>
+	<ExplainedKey key="left" special={true} description="Seek 5s backward"/>
+	<ExplainedKey key="right" special={true} description="Seek 5s forward"/>
 
 	<ExplainedKey key="j" description="Seek 10s backward"/>
 	<ExplainedKey key="l" description="Seek 10s forward"/>
@@ -54,8 +54,8 @@
 	<ExplainedKey key="k" alternativeKeys={["space"]} description="Play/Pause video"/>
 	<ExplainedKey key="m" description="Mute/Unmute video"/>
 
-	<ExplainedKey key="+" special={true} description="Increase video speed"/>
-	<ExplainedKey key="-" special={true} description="Decrease video speed"/>
+	<ExplainedKey key="+" description="Increase video speed"/>
+	<ExplainedKey key="-" description="Decrease video speed"/>
 	<ExplainedKey key="0" description="Default video speed"/>
 
 </div>
