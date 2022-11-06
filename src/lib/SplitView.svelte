@@ -78,7 +78,7 @@
 		}
 
 		if (!newFile.objectUrl) { // Setup my custom file object url
-			newFile.objectUrl = URL.createObjectURL(newFile.file); // TODO: Research if MKV files work
+			newFile.objectUrl = URL.createObjectURL(newFile.file);
 		}
 
 		currentFileIndex = newIndex;

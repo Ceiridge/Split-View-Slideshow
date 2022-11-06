@@ -10,8 +10,12 @@
 	let focusedViewIndex = 0;
 
 	addView();
+
+	let nonReactive = {
+		modifiedViews: true
+	};
 	beforeUpdate(() => {
-		if (splitViews) {
+		if (splitViews && nonReactive.modifiedViews) {
 			// Clean up previous sliders
 			for (const gutter of [...splitViews.getElementsByClassName("gutter")]) {
 				splitViews.removeChild(gutter);
@@ -19,8 +23,13 @@
 		}
 	});
 	afterUpdate(() => {
-		// TODO: Restore slider positions
-		Split(splitViews.getElementsByClassName("view"));
+		if (nonReactive.modifiedViews) {
+			nonReactive.modifiedViews = false;
+
+			Split(splitViews.getElementsByClassName("view"), {
+				gutterSize: 5
+			});
+		}
 	});
 
 	function onGlobalKeyDown(event) {
@@ -67,7 +76,8 @@
 		// Insert at focused index
 		views.splice(focusedViewIndex + 1, 0, newViewObject);
 		views = views;
-		switchFocusTo(focusedViewIndex - 1);
+		nonReactive.modifiedViews = true;
+		switchFocusTo(focusedViewIndex + 1);
 	}
 
 	function popFocusedView() {
@@ -77,7 +87,8 @@
 		}
 
 		views = views.filter(view => view !== views[focusedViewIndex]);
-		switchFocusTo(focusedViewIndex + 1);
+		nonReactive.modifiedViews = true;
+		switchFocusTo(focusedViewIndex - 1);
 	}
 
 	function switchFocusTo(newIndex) {
@@ -102,6 +113,7 @@
 
 		[views[index], views[targetIndex]] = [views[targetIndex], views[index]];
 		views = views;
+		nonReactive.modifiedViews = true;
 	}
 </script>
 
