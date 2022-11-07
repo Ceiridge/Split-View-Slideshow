@@ -234,7 +234,21 @@
 		background-color: var(--global-background-color);
 	}
 
-	.focused {
+	.view:before {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+
+	.view.focused {
+		background-color: var(--global-background-color-bright);
+	}
+
+	.view.focused:before {
 		animation-name: focusedHide;
 		animation-duration: 2s;
 	}
@@ -249,7 +263,7 @@
 		}
 	}
 
-	.dragging {
+	.view.dragging:before {
 		box-shadow: inset 0 0 30px 3px #198aed;
 	}
 </style>

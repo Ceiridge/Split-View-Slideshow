@@ -1,5 +1,6 @@
 :root {
 	--global-background-color: #242424;
+	--global-background-color-bright: #3a3a3a;
 
 	font-family: "Open Sans", Roboto, Helvetica, Arial, sans-serif;
 	font-size: 16px;
