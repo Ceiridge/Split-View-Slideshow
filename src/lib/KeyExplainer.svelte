@@ -31,10 +31,10 @@
 	<ExplainedKey key="q" description="Switch active split view focus to the left"/>
 	<ExplainedKey key="e" description="Switch active split view focus to the right"/>
 
-	<ExplainedKey modifierKeys={["ctrl"]} key="q" description="Switch active split view focus to the left"/>
-	<ExplainedKey modifierKeys={["ctrl"]} key="e" description="Switch active split view focus to the right"/>
+	<ExplainedKey modifierKeys={["ctrl"]} key="q" description="Move focused split view to the left"/>
+	<ExplainedKey modifierKeys={["ctrl"]} key="e" description="Move focused split view to the right"/>
 
-	<ExplainedKey key="a" description="Go to the next image"/>
+	<ExplainedKey key="a" description="Go to the previous image"/>
 	<ExplainedKey key="d" description="Go to the next image"/>
 
 	<ExplainedKey key="s" description="Start/Stop slideshow"/>
