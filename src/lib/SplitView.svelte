@@ -176,6 +176,10 @@
 		}
 	}
 
+	function isSlideshowActive() {
+		return slideshowInterval !== null;
+	}
+
 	function onDragOver(event) {
 		event.preventDefault();
 	}
@@ -203,6 +207,14 @@
 		const files = await convertItemsIntoFiles(itemEntries, loadRecursively);
 		onFilesInput(files, false);
 	}
+
+	function onMediaError() {
+		// TODO: Skip without slideshow setting
+		if (isSlideshowActive() && hasAnyMediaLoaded && loadedFiles.length > 1) {
+			console.log("Skipped erroneous media");
+			switchRight();
+		}
+	}
 </script>
 
 <svelte:window on:keydown={onGlobalKeyDown}/>
@@ -222,9 +234,13 @@
 		<EmptyMediaError folderFileInput={folderFileInput} fileFileInput={fileFileInput}/>
 
 	{:else if (loadedFiles[currentFileIndex] && loadedFiles[currentFileIndex].objectUrl)}
-		<MediaPlayer mimeType={loadedFiles[currentFileIndex].mime} url={loadedFiles[currentFileIndex].objectUrl}
-					 displayFileName={loadedFiles[currentFileIndex].path} splitViewId={randomId}
-					 bind:exposedFunctions={mediaPlayerExposedFunctions}/>
+		<MediaPlayer mimeType={loadedFiles[currentFileIndex].mime}
+					 url={loadedFiles[currentFileIndex].objectUrl}
+					 displayFileName={loadedFiles[currentFileIndex].path}
+					 splitViewId={randomId}
+					 bind:exposedFunctions={mediaPlayerExposedFunctions}
+					 on:errored={onMediaError}
+		/>
 	{/if}
 </div>
 

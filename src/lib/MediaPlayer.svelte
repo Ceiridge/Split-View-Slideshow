@@ -1,6 +1,6 @@
 <script>
 	import Plyr from "plyr";
-	import {afterUpdate} from "svelte";
+	import {afterUpdate, createEventDispatcher} from "svelte";
 	import {defaultVolume} from "../GlobalState.js";
 
 	export let mimeType;
@@ -152,21 +152,27 @@
 
 		return mime;
 	}
+
+	const dispatch = createEventDispatcher();
+
+	function onMediaLoadError() {
+		dispatch("errored"); // Send an errored event to listeners to encourage skipping this media
+	}
 </script>
 
 <div class="mediaPlayer" bind:this={mediaPlayerElement}>
 	{#key url}
 		{#if (renderType === "img")}
-			<img class="mediaImage" src={url} alt={displayFileName}/>
+			<img class="mediaImage" src={url} alt={displayFileName} on:error={onMediaLoadError}/>
 
 		{:else if (renderType === "video")}
 			<video playsinline controls autoplay bind:this={videoPlayer}>
-				<source src={url} type={translateMimeType(mimeType)}/>
+				<source src={url} type={translateMimeType(mimeType)} on:error={onMediaLoadError}/>
 			</video>
 
 		{:else if (renderType === "audio")}
 			<audio controls autoplay bind:this={videoPlayer}>
-				<source src={url} type={translateMimeType(mimeType)}/>
+				<source src={url} type={translateMimeType(mimeType)} on:error={onMediaLoadError}/>
 			</audio>
 
 		{/if}
