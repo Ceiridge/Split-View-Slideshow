@@ -119,8 +119,21 @@
 						videoPlayerPlyr.speed = 1;
 						return true;
 					default:
-						return false;
+						break;
 				}
+			}
+
+			// For all media types
+			switch (key) {
+				case 'f':
+					flipMedia(true);
+					return true;
+				case 'F':
+					flipMedia(false);
+					return true;
+
+				default:
+					break;
 			}
 
 			return false; // true if handled
@@ -137,6 +150,18 @@
 			return null;
 		}
 	};
+
+	function flipMedia(horizontally) {
+		const mediaElement = mediaPlayerElement.querySelector("img, video");
+		console.log(mediaElement);
+		const className = horizontally ? "flippedHorizontally" : "flippedVertically";
+
+		if (mediaElement.classList.contains(className)) {
+			mediaElement.classList.remove(className);
+		} else {
+			mediaElement.classList.add(className);
+		}
+	}
 
 	function translateMimeType(mime) {
 		switch (mime) {
@@ -196,5 +221,17 @@
 
 	:global(.plyr video) {
 		height: 100vh !important; /* This might cause problems in the future if there are vertical split views */
+	}
+
+	:global(.flippedHorizontally) {
+		transform: scaleX(-1);
+	}
+
+	:global(.flippedVertically) {
+		transform: scaleY(-1);
+	}
+
+	:global(.flippedHorizontally.flippedVertically) {
+		transform: scaleX(-1) scaleY(-1);
 	}
 </style>

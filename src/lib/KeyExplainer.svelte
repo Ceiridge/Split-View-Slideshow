@@ -58,6 +58,9 @@
 	<ExplainedKey key="k" alternativeKeys={["space"]} description="Play/Pause video"/>
 	<ExplainedKey key="m" description="Mute/Unmute video"/>
 
+	<ExplainedKey key="f" description="Flip horizontally"/>
+	<ExplainedKey modifierKeys={["shift"]} key="f" description="Flip vertically"/>
+
 	<ExplainedKey key="+" description="Increase video speed"/>
 	<ExplainedKey key="-" description="Decrease video speed"/>
 	<ExplainedKey key="0" description="Default video speed"/>

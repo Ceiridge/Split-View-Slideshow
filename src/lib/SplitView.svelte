@@ -42,9 +42,11 @@
 		}
 
 		ensureObjectUrl(newFile);
+		newFile.preloaded = true;
 		currentFileIndex = newIndex;
 		toast.show(newFile.path, `(${currentFileIndex + 1}/${loadedFiles.length})`);
 
+		// Preload the next images
 		const nextIndices = [wrapIndex(loadedFiles, newIndex + 1), wrapIndex(loadedFiles, newIndex - 1)];
 		for (const nextIndex of nextIndices) {
 			const preloadFile = loadedFiles[nextIndex];
