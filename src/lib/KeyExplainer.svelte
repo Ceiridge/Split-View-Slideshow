@@ -34,6 +34,9 @@
 	<ExplainedKey modifierKeys={["ctrl"]} key="q" description="Move focused split view to the left"/>
 	<ExplainedKey modifierKeys={["ctrl"]} key="e" description="Move focused split view to the right"/>
 
+	<ExplainedKey modifierKeys={["shift"]} key="q" description="Duplicate focused split view to the left"/>
+	<ExplainedKey modifierKeys={["shift"]} key="e" description="Duplicate focused split view to the right"/>
+
 	<ExplainedKey key="a" description="Go to the previous image"/>
 	<ExplainedKey key="d" description="Go to the next image"/>
 

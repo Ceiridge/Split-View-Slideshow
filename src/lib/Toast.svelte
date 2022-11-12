@@ -26,8 +26,8 @@
 </script>
 
 {#if showNow}
-	<span class="toast" in:fade={{delay: 0, duration: 250, easing: cubicInOut}}
-		  out:fade={{delay: 3250, duration: 250, easing: cubicInOut}}>
+	<span class="toast" in:fade|local={{delay: 0, duration: 250, easing: cubicInOut}}
+		  out:fade|local={{delay: 3250, duration: 250, easing: cubicInOut}}>
 		{text}
 
 		<span class="toastExtra">

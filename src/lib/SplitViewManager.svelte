@@ -58,14 +58,23 @@
 
 				event.preventDefault();
 				break;
+			case "Q":
+				duplicateView(true);
+				event.preventDefault();
+				break;
+			case "E":
+				duplicateView(false);
+				event.preventDefault();
+				break;
 			default:
 				break;
 		}
 	}
 
-	function addView() {
+	function addView(left) {
 		const newViewObject = {
-			randomId: crypto.randomUUID()
+			randomId: crypto.randomUUID(),
+			exposedFunctions: null
 		};
 
 		if (views.length === 0) {
@@ -74,10 +83,10 @@
 		}
 
 		// Insert at focused index
-		views.splice(focusedViewIndex + 1, 0, newViewObject);
+		views.splice(focusedViewIndex + (left ? 0 : 1), 0, newViewObject);
 		views = views;
 		nonReactive.modifiedViews = true;
-		switchFocusTo(focusedViewIndex + 1);
+		switchFocusTo(focusedViewIndex + (left ? 0 : 1));
 	}
 
 	function popFocusedView() {
@@ -115,13 +124,27 @@
 		views = views;
 		nonReactive.modifiedViews = true;
 	}
+
+	function duplicateView(left) {
+		const state = views[focusedViewIndex].exposedFunctions.getDuplicableState();
+		addView(left);
+		const newView = views[focusedViewIndex];
+
+		const duplicateInterval = setInterval(() => {
+			if (newView && newView.exposedFunctions) {
+				newView.exposedFunctions.setDuplicableState(state);
+				clearInterval(duplicateInterval);
+			}
+		}, 10);
+	}
 </script>
 
 <svelte:window on:keydown={onGlobalKeyDown}/>
 
 <div class="splitviews" bind:this={splitViews}>
 	{#each views as view, i (view.randomId)}
-		<SplitView focused={i === focusedViewIndex} randomId={view.randomId} on:click={() => {switchFocusTo(i);}}/>
+		<SplitView focused={i === focusedViewIndex} randomId={view.randomId}
+				   on:click={() => {switchFocusTo(i);}} bind:exposedFunctions={view.exposedFunctions}/>
 	{/each}
 </div>
 

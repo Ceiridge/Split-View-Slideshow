@@ -1,3 +1,6 @@
+import mime from "mime";
+import {ALLOWED_MIME_TYPES} from "./Constants.js";
+
 export function wrapIndex(arr, index) {
 	if (index < 0) {
 		index = arr.length - 1;
@@ -34,4 +37,42 @@ export async function convertItemsIntoFiles(itemEntries, withRecursion) {
 
 	await recurse(itemEntries, !itemEntries.some(itemEntry => itemEntry.isFile)); // If all directories, do first recursions
 	return files;
+}
+
+export function getRelativePath(file, removeFirstFolder) {
+	let wkPath = file.webkitRelativePath;
+	if (!wkPath) {
+		return wkPath;
+	}
+
+	if (removeFirstFolder && wkPath.includes("/")) {
+		wkPath = wkPath.substring(wkPath.indexOf("/") + 1);
+	}
+
+	return wkPath;
+}
+
+export function filterFilesInput(files, isFromFolder, loadRecursively) {
+	return [...files].filter(file => {
+		let recursiveCheck = true;
+
+		if (!loadRecursively) {
+			const relativePath = getRelativePath(file, isFromFolder);
+
+			if (!relativePath) {
+				recursiveCheck = true;
+			} else {
+				recursiveCheck = relativePath === file.name;
+			}
+		}
+
+		// Only allowed mime types
+		const mimeType = mime.getType(file.name);
+		return recursiveCheck && mimeType && ALLOWED_MIME_TYPES.some(allowedType => mimeType.startsWith(allowedType));
+	}).map(file => ({
+		file,
+		objectUrl: null,
+		path: file.name,
+		mime: mime.getType(file.name)
+	}));
 }

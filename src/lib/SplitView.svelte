@@ -1,14 +1,16 @@
 <script>
-	import mime from "mime";
-	import {readRecursively, slideshowDelays} from "../GlobalState.js";
+	import {onDestroy} from "svelte";
+	import {readRecursively, referenceObjectUrls, slideshowDelays} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
-	import {ALLOWED_MIME_TYPES} from "../Constants.js";
-	import {convertItemsIntoFiles, wrapIndex} from "../Helpers.js";
+	import {convertItemsIntoFiles, filterFilesInput, wrapIndex} from "../Helpers.js";
 	import Toast from "./Toast.svelte";
 	import EmptyMediaError from "./EmptyMediaError.svelte";
 
 	export let focused = false;
 	export let randomId;
+
+	let loadedFiles = [];
+	let currentFileIndex = 0;
 
 	let toast, folderFileInput, fileFileInput;
 
@@ -22,53 +24,14 @@
 		slideshowTimes = val;
 	});
 
-	let loadedFiles = [];
-	let currentFileIndex = 0;
-
-	function getRelativePath(file, removeFirstFolder) {
-		let wkPath = file.webkitRelativePath;
-		if (!wkPath) {
-			return wkPath;
-		}
-
-		if (removeFirstFolder && wkPath.includes("/")) {
-			wkPath = wkPath.substring(wkPath.indexOf("/") + 1);
-		}
-
-		return wkPath;
-	}
-
 	function onFilesInput(files, isFromFolder) {
 		if (!files || files.length === 0) {
 			return;
 		}
 
 		cleanup();
-
-		loadedFiles = [...files].filter(file => {
-			let recursiveCheck = true;
-
-			if (!loadRecursively) {
-				const relativePath = getRelativePath(file, isFromFolder);
-
-				if (!relativePath) {
-					recursiveCheck = true;
-				} else {
-					recursiveCheck = relativePath === file.name;
-				}
-			}
-
-			// Only allowed mime types
-			const mimeType = mime.getType(file.name);
-			return recursiveCheck && mimeType && ALLOWED_MIME_TYPES.some(allowedType => mimeType.startsWith(allowedType));
-		}).map(file => ({
-			file,
-			objectUrl: null,
-			path: file.name,
-			mime: mime.getType(file.name)
-		}));
+		loadedFiles = filterFilesInput(files, isFromFolder, loadRecursively);
 		switchFileIndex(0);
-		console.log(loadedFiles);
 	}
 
 	function switchFileIndex(newIndex) {
@@ -80,6 +43,7 @@
 
 		if (!newFile.objectUrl) { // Setup my custom file object url
 			newFile.objectUrl = URL.createObjectURL(newFile.file);
+			referenceObjectUrls([newFile.objectUrl], false);
 		}
 
 		currentFileIndex = newIndex;
@@ -87,12 +51,25 @@
 	}
 
 	function cleanup() {
-		for (const file of loadedFiles) {
-			if (file.objectUrl) {
-				URL.revokeObjectURL(file.objectUrl);
-			}
-		}
+		referenceObjectUrls(loadedFiles.map(file => file.objectUrl), true);
 	}
+
+	onDestroy(cleanup);
+
+	export const exposedFunctions = {
+		getDuplicableState: () => {
+			return {
+				loadedFiles,
+				currentFileIndex
+			};
+		},
+		setDuplicableState: (state) => {
+			loadedFiles = state.loadedFiles;
+			currentFileIndex = state.currentFileIndex;
+
+			referenceObjectUrls(loadedFiles.map(file => file.objectUrl), false);
+		}
+	};
 
 	let mediaPlayerExposedFunctions;
 	let hasAnyMediaLoaded = false;
@@ -180,6 +157,15 @@
 		return slideshowInterval !== null;
 	}
 
+	function onMediaError() {
+		// TODO: Skip without slideshow setting
+		if (isSlideshowActive() && hasAnyMediaLoaded && loadedFiles.length > 1) {
+			console.log("Skipped erroneous media");
+			switchRight();
+		}
+	}
+
+
 	function onDragOver(event) {
 		event.preventDefault();
 	}
@@ -206,14 +192,6 @@
 
 		const files = await convertItemsIntoFiles(itemEntries, loadRecursively);
 		onFilesInput(files, false);
-	}
-
-	function onMediaError() {
-		// TODO: Skip without slideshow setting
-		if (isSlideshowActive() && hasAnyMediaLoaded && loadedFiles.length > 1) {
-			console.log("Skipped erroneous media");
-			switchRight();
-		}
 	}
 </script>
 
