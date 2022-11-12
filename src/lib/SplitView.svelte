@@ -41,13 +41,27 @@
 			return;
 		}
 
-		if (!newFile.objectUrl) { // Setup my custom file object url
-			newFile.objectUrl = URL.createObjectURL(newFile.file);
-			referenceObjectUrls([newFile.objectUrl], false);
-		}
-
+		ensureObjectUrl(newFile);
 		currentFileIndex = newIndex;
 		toast.show(newFile.path, `(${currentFileIndex + 1}/${loadedFiles.length})`);
+
+		const nextIndices = [wrapIndex(loadedFiles, newIndex + 1), wrapIndex(loadedFiles, newIndex - 1)];
+		for (const nextIndex of nextIndices) {
+			const preloadFile = loadedFiles[nextIndex];
+
+			if (preloadFile && !preloadFile.preloaded) {
+				ensureObjectUrl(loadedFiles[nextIndex]);
+				new Image().src = loadedFiles[nextIndex].objectUrl;
+				preloadFile.preloaded = true;
+			}
+		}
+	}
+
+	function ensureObjectUrl(file) {
+		if (!file.objectUrl) { // Setup my custom file object url
+			file.objectUrl = URL.createObjectURL(file.file);
+			referenceObjectUrls([file.objectUrl], false);
+		}
 	}
 
 	function cleanup() {

@@ -22,6 +22,10 @@ export async function convertItemsIntoFiles(itemEntries, withRecursion) {
 
 	async function recurse(items, recurseAnywayOnce) {
 		for (const item of items) {
+			if (!item) {
+				continue;
+			}
+
 			if (item.isFile) {
 				files.push(await itemToFile(item));
 			} else if (item.isDirectory && (withRecursion || recurseAnywayOnce)) {
@@ -73,6 +77,7 @@ export function filterFilesInput(files, isFromFolder, loadRecursively) {
 		file,
 		objectUrl: null,
 		path: file.name,
-		mime: mime.getType(file.name)
+		mime: mime.getType(file.name),
+		preloaded: false
 	}));
 }
