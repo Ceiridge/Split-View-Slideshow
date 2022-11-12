@@ -123,6 +123,9 @@
 		[views[index], views[targetIndex]] = [views[targetIndex], views[index]];
 		views = views;
 		nonReactive.modifiedViews = true;
+
+		views[index].exposedFunctions.reload();
+		views[targetIndex].exposedFunctions.reload();
 	}
 
 	function duplicateView(left) {

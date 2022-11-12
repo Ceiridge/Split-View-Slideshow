@@ -84,6 +84,9 @@
 			currentFileIndex = state.currentFileIndex;
 
 			referenceObjectUrls(loadedFiles.map(file => file.objectUrl), false);
+		},
+		reload: () => {
+			mediaPlayerExposedFunctions.reload();
 		}
 	};
 

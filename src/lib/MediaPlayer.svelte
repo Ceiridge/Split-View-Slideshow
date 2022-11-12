@@ -148,14 +148,22 @@
 				return "videoWait";
 			}
 			return null;
+		},
+		reload: () => {
+			const currentUrl = url;
+			url = "";
+
+			setTimeout(() => {
+				url = currentUrl;
+			}, 1);
 		}
 	};
 
 	function flipMedia(horizontally) {
 		const mediaElement = mediaPlayerElement.querySelector("img, video");
-		console.log(mediaElement);
 		const className = horizontally ? "flippedHorizontally" : "flippedVertically";
 
+		// Apply the class manually to prevent issues with Plyr and to ensure that it is not copied over when switching media
 		if (mediaElement.classList.contains(className)) {
 			mediaElement.classList.remove(className);
 		} else {
