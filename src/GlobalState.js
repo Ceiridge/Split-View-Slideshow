@@ -34,6 +34,7 @@ function readUserSettings() {
 	return {
 		readRecursively: false,
 		hideCursor: true,
+		slideshowSkipErrorMedia: true,
 
 		defaultVolume: 0.1,
 		slideshowDelays: {

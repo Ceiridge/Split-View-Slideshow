@@ -14,10 +14,11 @@
 
 	let toast, folderFileInput, fileFileInput;
 
-	let loadRecursively = false, slideshowTimes;
+	let loadRecursively = false, slideshowTimes, slideshowSkipErrorMedia = false;
 	userSettings.subscribe(settings => {
 		loadRecursively = settings.readRecursively;
 		slideshowTimes = settings.slideshowDelays;
+		slideshowSkipErrorMedia = settings.slideshowSkipErrorMedia;
 	});
 
 	function onFilesInput(files, isFromFolder) {
@@ -173,8 +174,7 @@
 	}
 
 	function onMediaError() {
-		// TODO: Skip without slideshow setting
-		if (isSlideshowActive() && hasAnyMediaLoaded && loadedFiles.length > 1) {
+		if (slideshowSkipErrorMedia && isSlideshowActive() && hasAnyMediaLoaded && loadedFiles.length > 1) {
 			console.log("Skipped erroneous media");
 			switchRight();
 		}

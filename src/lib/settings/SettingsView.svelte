@@ -17,11 +17,6 @@
 									path="readRecursively"/>
 					<SettingsOption name="Hide cursor after inactivity" type="checkbox"
 									path="hideCursor"/>
-
-					<SettingsOption name="Slideshow image delay (ms)" type="number" args={{min: 0}}
-									path="slideshowDelays.imageWait"/>
-					<SettingsOption name="Slideshow video delay (ms)" type="number" args={{min: 0}}
-									path="slideshowDelays.videoWait"/>
 				</div>
 			</details>
 
@@ -31,6 +26,20 @@
 				<div class="settingsFlex">
 					<SettingsOption name="Default video volume" type="number" args={{min: 0, max: 1, step: 0.05}}
 									path="defaultVolume"/>
+				</div>
+			</details>
+
+			<details open>
+				<summary>Slideshow</summary>
+
+				<div class="settingsFlex">
+					<SettingsOption name="Skip erroneous media automatically" type="checkbox"
+									path="slideshowSkipErrorMedia"/>
+
+					<SettingsOption name="Slideshow image delay (ms)" type="number" args={{min: 0}}
+									path="slideshowDelays.imageWait"/>
+					<SettingsOption name="Slideshow video delay (ms)" type="number" args={{min: 0}}
+									path="slideshowDelays.videoWait"/>
 				</div>
 			</details>
 		</div>
@@ -70,5 +79,8 @@
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		grid-column-gap: 0;
+
+		padding-left: 15px;
+		padding-right: 15px;
 	}
 </style>
