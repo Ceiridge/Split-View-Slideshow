@@ -1,7 +1,8 @@
 <script>
 	import {userSettings} from "../../GlobalState.js";
 
-	export let name, type, args, path;
+	export let name, type, path;
+	export let args = {};
 	let fullSettings, val;
 
 	function actInObject(obj, path, newValue = undefined) {

@@ -15,6 +15,8 @@
 				<div class="settingsFlex">
 					<SettingsOption name="Load all media recursively from a folder" type="checkbox"
 									path="readRecursively"/>
+					<SettingsOption name="Hide cursor after inactivity" type="checkbox"
+									path="hideCursor"/>
 
 					<SettingsOption name="Slideshow image delay (ms)" type="number" args={{min: 0}}
 									path="slideshowDelays.imageWait"/>

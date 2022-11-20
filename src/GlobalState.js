@@ -33,6 +33,8 @@ function readUserSettings() {
 	// Defaults:
 	return {
 		readRecursively: false,
+		hideCursor: true,
+
 		defaultVolume: 0.1,
 		slideshowDelays: {
 			imageWait: 5000,

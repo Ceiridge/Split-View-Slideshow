@@ -1,8 +1,8 @@
 <script>
-	import {onMount} from "svelte";
+	import {onDestroy, onMount} from "svelte";
 	import KeyExplainer from "./lib/KeyExplainer.svelte";
 	import SplitViewManager from "./lib/SplitViewManager.svelte";
-	import {resetTrigger} from "./GlobalState.js";
+	import {resetTrigger, userSettings} from "./GlobalState.js";
 
 	let showExplainer = true;
 
@@ -21,6 +21,18 @@
 		resetTriggerKey = val
 	});
 
+	let shouldHideCursor = false;
+	let lastMouseMove = Date.now();
+	let cursorHideInterval;
+
+	userSettings.subscribe(settings => {
+		shouldHideCursor = settings.hideCursor;
+	});
+
+	function onMouseMove() {
+		lastMouseMove = Date.now();
+	}
+
 	onMount(() => {
 		// Clean up old plyr keys
 		for (const storageKey in window.localStorage) {
@@ -28,10 +40,22 @@
 				window.localStorage.removeItem(storageKey);
 			}
 		}
+
+		cursorHideInterval = setInterval(() => {
+			if (shouldHideCursor && Date.now() - lastMouseMove > 5000) { // 5s
+				document.body.classList.add("hideCursor");
+			} else {
+				document.body.classList.remove("hideCursor");
+			}
+		}, 100);
+	});
+
+	onDestroy(() => {
+		clearInterval(cursorHideInterval);
 	});
 </script>
 
-<svelte:window on:keydown={onGlobalKeyDown}/>
+<svelte:window on:keydown={onGlobalKeyDown} on:mousemove={onMouseMove}/>
 
 <main>
 	{#key resetTriggerKey}
@@ -56,5 +80,9 @@
 		box-sizing: border-box;
 
 		background-color: rgba(0, 0, 0, 0.75);
+	}
+
+	:global(.hideCursor *) {
+		cursor: none !important;
 	}
 </style>
