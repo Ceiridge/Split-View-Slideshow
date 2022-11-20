@@ -1,6 +1,6 @@
 <script>
 	import {onDestroy} from "svelte";
-	import {readRecursively, referenceObjectUrls, slideshowDelays} from "../GlobalState.js";
+	import {referenceObjectUrls, userSettings} from "../GlobalState.js";
 	import MediaPlayer from "./MediaPlayer.svelte";
 	import {convertItemsIntoFiles, filterFilesInput, wrapIndex} from "../Helpers.js";
 	import Toast from "./Toast.svelte";
@@ -14,14 +14,10 @@
 
 	let toast, folderFileInput, fileFileInput;
 
-	let loadRecursively = false;
-	readRecursively.subscribe(val => {
-		loadRecursively = val;
-	});
-
-	let slideshowTimes;
-	slideshowDelays.subscribe(val => {
-		slideshowTimes = val;
+	let loadRecursively = false, slideshowTimes;
+	userSettings.subscribe(settings => {
+		loadRecursively = settings.readRecursively;
+		slideshowTimes = settings.slideshowDelays;
 	});
 
 	function onFilesInput(files, isFromFolder) {

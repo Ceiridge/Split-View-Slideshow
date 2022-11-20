@@ -1,7 +1,7 @@
 <script>
 	import Plyr from "plyr";
 	import {afterUpdate, createEventDispatcher} from "svelte";
-	import {defaultVolume} from "../GlobalState.js";
+	import {userSettings} from "../GlobalState.js";
 
 	export let mimeType;
 	export let url;
@@ -22,12 +22,12 @@
 	let mediaPlayerElement;
 	let videoPlayer;
 	let videoPlayerPlyr;
-	let videoDefaultVolume;
 	let videoHasPlayed = false;
 
-	defaultVolume.subscribe(val => {
-		videoDefaultVolume = val;
-	});
+	let videoDefaultVolume;
+	userSettings.subscribe(settings => {
+		videoDefaultVolume = settings.defaultVolume;
+	})
 
 	afterUpdate(() => {
 		if (videoPlayerPlyr) {

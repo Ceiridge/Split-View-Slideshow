@@ -1,6 +1,7 @@
 <script>
 	import Plyr from "plyr";
 	import ExplainedKey from "./ExplainedKey.svelte";
+	import SettingsView from "./settings/SettingsView.svelte";
 
 	const supportsWebApis =
 		"webkitRelativePath" in File.prototype
@@ -20,6 +21,7 @@
 {/if}
 
 <p>All your files and folders stay local.</p>
+<SettingsView />
 
 <h2>Key bindings help:</h2>
 

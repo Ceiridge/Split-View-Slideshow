@@ -1,4 +1,5 @@
 import {writable} from "svelte/store";
+import {LOCAL_STORAGE_SETTINGS_KEY} from "./Constants.js";
 
 export const objectUrlMemory = new Map(); // Counters that keep track of created object URLs
 export function referenceObjectUrls(objectUrls, dereference) {
@@ -17,11 +18,35 @@ export function referenceObjectUrls(objectUrls, dereference) {
 }
 
 export const resetTrigger = writable(Math.random());
+export const userSettings = writable(readUserSettings());
 
-// TODO: Settings
-export const readRecursively = writable(false);
-export const defaultVolume = writable(0.1);
-export const slideshowDelays = writable({
-	imageWait: 5000,
-	videoWait: 1500
+function readUserSettings() {
+	try {
+		const savedSettings = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
+		if (savedSettings) {
+			return JSON.parse(savedSettings);
+		}
+	} catch (e) {
+		console.error("Could not read settings", e);
+	}
+
+	// Defaults:
+	return {
+		readRecursively: false,
+		defaultVolume: 0.1,
+		slideshowDelays: {
+			imageWait: 5000,
+			videoWait: 1500
+		}
+	};
+}
+
+let firstRun = true; // Ignore the first subscription call
+userSettings.subscribe(newSettings => {
+	if (firstRun) {
+		firstRun = false;
+		return;
+	}
+
+	localStorage.setItem(LOCAL_STORAGE_SETTINGS_KEY, JSON.stringify(newSettings)); // Update settings
 });
